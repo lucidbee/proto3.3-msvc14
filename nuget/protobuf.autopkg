@@ -1,0 +1,99 @@
+configurations
+{
+    Toolset {
+        key : "PlatformToolset";
+        choices: { v140, v140_xp, v120, v120_xp, };
+    };
+}
+
+nuget
+{
+
+    nuspec
+    {
+        id = bonsai.protobuf-msvc-14;
+        version : 3.0.0.5;
+        title: Google Protobuf;
+        authors: { Google };
+        licenseUrl: "http://opensource.org/licenses/BSD-3-Clause";
+        projectUrl: "https://developers.google.com/protocol-buffers/";
+        iconUrl: "https://ssl.gstatic.com/codesite/ph/images/search-48.gif"
+        requireLicenseAcceptance: false;
+        summary: @"Protocol buffers are Google's language-neutral,
+                   platform-neutral, extensible mechanism for serializing
+                   structured data. Bonsai note: Uses tensorflow commit.";
+
+        description: @"Protocol buffers are Google's language-neutral,
+                       platform-neutral, extensible mechanism for serializing
+                       structured data – think XML, but smaller, faster, and
+                       simpler. You define how you want your data to be
+                       structured once, then you can use special generated
+                       source code to easily write and read your structured
+                       data to and from a variety of data streams and using a
+                       variety of languages.";
+        copyright: Copyright 2015;
+        tags: { native, CoApp, protobuf, google protobuf,
+                                                     protocol buffers, cmake };
+    };
+
+    files
+    {
+		// Create a bin path pointing to bin in the default package
+		// ('bin' puts files in a redist package)
+		defaultbin += {
+			#output {
+				package = default;
+			};
+			#add-each-file : ::nuget.[redist]targets.[${condition}].CopyToOutput;
+			#destination : ${d_bin};
+		};
+
+        nestedInclude: {
+            #destination = ${d_include}\google\protobuf;
+            ".\build\include\google\protobuf\**\*"
+        };
+
+        config: {
+            #destination = ${pkg_root};
+            ".\*.cmake";
+        };
+
+        ("x64,Win32", "v140", "Debug,Release", "static, dynamic") => {
+            [${0},${1},${2},dynamic] {
+                lib: {
+                    #destination = ${build_root}\lib\${0}\${1}\dynamic\${2};
+                    ".\build\${0}\${1}\dynamic\${2}\libprotobuf-lite.lib";
+                    ".\build\${0}\${1}\dynamic\${2}\libprotobuf.lib";
+                    ".\build\${0}\${1}\dynamic\${2}\libprotoc.lib";
+                };
+                defaultbin: {
+                    #destination = ${build_root}\bin\${0}\${1}\dynamic\${2};
+                    ".\build\${0}\${1}\dynamic\${2}\libprotobuf-lite.dll";
+                    ".\build\${0}\${1}\dynamic\${2}\libprotobuf.dll";
+                    ".\build\${0}\${1}\dynamic\${2}\libprotoc.dll";
+                    ".\build\${0}\${1}\dynamic\${2}\protoc.exe";
+                };
+                // add a target for protoc
+            };
+            [${0},${1},${2},static] {
+                lib: {
+                    #destination = ${build_root}\lib\${0}\${1}\static\${2};
+                    ".\build\${0}\${1}\static\${2}\libprotobuf-lite.lib";
+                    ".\build\${0}\${1}\static\${2}\libprotobuf.lib";
+                    ".\build\${0}\${1}\static\${2}\libprotoc.lib";
+                };
+                defaultbin: {
+                    #destination = ${build_root}\bin\${0}\${1}\static\${2};
+                    ".\build\${0}\${1}\static\${2}\protoc.exe";
+                };
+            };
+        };
+    };
+
+    targets {
+        [static] {
+            Libraries += "shlwapi.lib";
+        };
+        Includes += ${pkg_root}/${d_include}; 
+    };
+}
