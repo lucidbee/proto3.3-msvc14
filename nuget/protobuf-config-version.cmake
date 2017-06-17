@@ -2,7 +2,7 @@
 
 # -----------------------------------------------------------------------------
 # library version
-set (PACKAGE_VERSION "3.0")
+set (PACKAGE_VERSION "3.3")
 
 # -----------------------------------------------------------------------------
 # check compatibility
@@ -14,7 +14,7 @@ set (PACKAGE_VERSION_COMPATIBLE TRUE)
 set (PACKAGE_VERSION_UNSUITABLE FALSE)
 
 if ("${PACKAGE_FIND_VERSION_MAJOR}" EQUAL "3" AND
-    "${PACKAGE_FIND_VERSION_MINOR}" EQUAL "0")
+    "${PACKAGE_FIND_VERSION_MINOR}" EQUAL "3")
   set (PACKAGE_VERSION_EXACT TRUE)
 else ()
   set (PACKAGE_VERSION_EXACT FALSE)
