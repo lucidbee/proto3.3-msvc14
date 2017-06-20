@@ -1,32 +1,41 @@
 ## Packaging Google Protobuf for Nuget
 
-NOTE for msvs 2015
-- If you need to rebuild, note that there is no remove/uninstall capability or
-  command outside of visual studio nuget package manager.  You must manually 
-  remove the version under <home_dir>/.nuget and also delete the version under 
-  brain/packages or you cannot install (unless there is a new version number). 
+NOTE NOTE NOTE for msvs 2015
+| - If you need to rebuild, note that there is no remove/uninstall capability or
+|   command outside of visual studio nuget package manager.  You must manually 
+|   remove the version under <home_dir>/.nuget and also delete the version under 
+|   brain/packages or you cannot install (unless there is a new version number). 
+| 
+| - BuildAndWriteNugetPackage.ps1 reports success always. Check that the libs are built.
+| 
+| - cmake of the tests did not work, caused failure, I deleted the run command.
+|   (will probably work if you run autogen.sh to download gmock)
+| 
+| - The msvc 2015 compiler defaults to /MT (static linking to the runtime library)
+|   which is in conflict with what inkingc expects resulting in linker errors. 
+|   (In older versions these errors were not reported.) Thus I had to add 
+|   /MD (DLL runtime library) to the protobuf/cmake dir cmake scripts.
+|   nuget protobuf.autopkg so I deleted the option in protobuf/cmake dir.
+| 
+| - the debug libs were build with the 'd' suffix. That does not sync with the
+|   nuget protobuf.autopkg so I deleted the option in protobuf/cmake dir.
+| 
+| - coapp tools are NO LONGER MAINTAINED though they work for now.
+|   To get the xml files for plain nuget run Write-NuGetPackage with 
+|   -NoClean option
+| 
+| - There is a Nuget Package Explorer gui which can be used to publish packages
+|   and add files to packages. Available on github and windows store.
+|   Use to open the package after coapp creates it. 
+|   I had to add protobuf-config.cmake manually to the package using this app
+|   because the coapp script did not do it. Without this file the msvs builds do
+|   not work
+| 
+END NOTE NOTE NOTE
 
-- BuildAndWriteNugetPackage.ps1 reports success always. Check that the libs are built.
+STEPS to create a nuget package for the Google C++ Protocol Buffer Library:
 
-- cmake of the tests did not work, caused failure, I deleted the run command.
-  (will probably work if you run autogen.sh to download gmock)
-
-- The msvc 2015 compiler defaults to /MT (static linking to the runtime library)
-  which is in conflict with what inkingc expects resulting in linker errors. 
-  (In older versions these errors were not reported.) Thus I had to add 
-  /MD (DLL runtime library) to the protobuf/cmake dir cmake scripts.
-  nuget protobuf.autopkg so I deleted the option in protobuf/cmake dir.
-
-- the debug libs were build with the 'd' suffix. That does not sync with the
-  nuget protobuf.autopkg so I deleted the option in protobuf/cmake dir.
-
-- coapp tools are no longer maintained though they work for now.
-  To get the xml files for plain nuget run Write-NuGetPackage with 
-  -NoClean option
-
-To create a nuget package for the Google C++ Protocol Buffer Library:
-
-* Install the CoApp tools: http://downloads.coapp.org/files/Development.CoApp.Tools.Powershell.msi
+* Install the CoApp tools: http://coapp.org/files/CoApp.Tools.Powershell.msi
 * Install VS 2015.
 * Run the BuildAndWriteNugetPackage.ps1 PS script from this folder.
 
